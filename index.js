@@ -1,5 +1,5 @@
-import fs from "fs";
-import { TwitterApi } from "twitter-api-v2";
+const fs = require("fs");
+const { TwitterApi } = require("twitter-api-v2");
 
 async function main() {
   const client = new TwitterApi({
