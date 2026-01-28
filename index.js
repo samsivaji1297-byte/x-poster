@@ -13,13 +13,24 @@ async function main() {
   const nextPost = posts.find(p => p.posted === false);
 
   if (!nextPost) {
-    console.log("No posts left.");
+    console.log("No posts left to publish.");
     return;
   }
 
   try {
-    const response = await client.v2.tweet(nextPost.text);
-    console.log("Posted:", response);
+    let response;
+
+    if (Array.isArray(nextPost.text)) {
+      // Thread mode
+      console.log("Posting thread...");
+      response = await client.v2.tweetThread(nextPost.text.map(t => ({ text: t })));
+    } else {
+      // Single post mode
+      console.log("Posting single tweet...");
+      response = await client.v2.tweet(nextPost.text);
+    }
+
+    console.log("Posted successfully:", response);
 
     nextPost.posted = true;
     fs.writeFileSync("posts.json", JSON.stringify(posts, null, 2));
